@@ -60,7 +60,7 @@ exports.getBooks = async (req, res) => {
   }
 };*/
 
-exports.scrapeAndSave = async (req, res) => {
+/*exports.scrapeAndSave = async (req, res) => {
     try {
         const books = await scrapeBooks();
         await Book.insertMany(books);
@@ -69,7 +69,23 @@ exports.scrapeAndSave = async (req, res) => {
         console.error("🔥 Scraping Error:", error); // ✅ Log exact error
         res.status(500).json({ error: 'Scraping failed', details: error.message }); // show details
     }
+};*/
+
+exports.scrapeAndSave = async (req, res) => {
+    try {
+        const books = await scrapeBooks();
+
+        await Book.deleteMany({}); // 🧹 Clear old scraped data before saving new
+
+        await Book.insertMany(books);
+
+        res.json({ message: 'Scraping successful', count: books.length });
+    } catch (error) {
+        console.error("🔥 Scraping Error:", error);
+        res.status(500).json({ error: 'Scraping failed', details: error.message });
+    }
 };
+
 
 
 exports.getBooks = async (req, res) => {
